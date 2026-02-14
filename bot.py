@@ -74,8 +74,10 @@ instrucciones_sistema = (
     "Si recibes una lista de puertos, explicas qué servicios son y sus riesgos."
 )
 
+# CORREGIDO: "gemini-3-flash" NO FUNCIONA en la API pública, da error 404.
+# Usamos el 1.5 Flash que es el estándar actual rápido.
 model = genai.GenerativeModel(
-    model_name="gemini-3-flash", 
+    model_name="gemini-1.5-flash", 
     system_instruction=instrucciones_sistema
 )
 
