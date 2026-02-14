@@ -7,10 +7,6 @@ import threading
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters
 from flask import Flask
-import nest_asyncio
-
-# Parche para bucles de eventos en servidores
-nest_asyncio.apply()
 
 # --- CONFIGURACIÓN DE LLAVES (Desde Render) ---
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
