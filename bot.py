@@ -13,26 +13,33 @@ TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
 
-# --- IA ---
-# IMPORTANTE: He puesto 'gemini-1.5-flash' porque es el más estable para APIs gratuitas
-model = genai.GenerativeModel("gemini-1.5-flash")
+# --- IA: GEMINI 3 FLASH ---
+instrucciones_sistema = (
+    "Eres 'CiberSentryBot', un experto en Ciberseguridad Defensiva (White Hat). "
+    "Responde de forma breve, concisa y técnica."
+)
+
+model = genai.GenerativeModel(
+    model_name="gemini-3-flash", 
+    system_instruction=instrucciones_sistema
+)
 
 async def manejar_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not update.message or not update.message.text: return
     user_input = update.message.text
 
     try:
-        # Intentamos generar respuesta
+        # Generamos la respuesta con Gemini 3
         response = model.generate_content(user_input)
         await update.message.reply_text(response.text)
     except Exception as e:
-        # ESTO NOS DIRÁ EL ERROR REAL
-        await update.message.reply_text(f"❌ ERROR DE IA: {str(e)}")
+        # Si falla, nos dirá el porqué real (API Key, modelo, etc)
+        await update.message.reply_text(f"❌ Error Gemini 3: {str(e)}")
 
-# --- SERVIDOR WEB ---
+# --- SERVIDOR WEB (Obligatorio para Render) ---
 app = Flask(__name__)
 @app.route('/')
-def index(): return "CiberSentry OK"
+def index(): return "CiberSentry Gemini 3 Activo"
 
 def run_flask():
     port = int(os.environ.get("PORT", 10000))
@@ -41,7 +48,7 @@ def run_flask():
 if __name__ == '__main__':
     threading.Thread(target=run_flask).start()
     if TELEGRAM_TOKEN:
-        print("✅ BOT ARRANCANDO...")
+        print("✅ ARRANCANDO BOT CON GEMINI 3...")
         app_bot = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
         app_bot.add_handler(MessageHandler(filters.TEXT, manejar_contenido))
         app_bot.run_polling()
